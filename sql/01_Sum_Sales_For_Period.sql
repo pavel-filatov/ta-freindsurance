@@ -35,16 +35,32 @@ See examples below to learn more.
 
 Returns: 1 if a given record lays inside of the range, 0 otherwise.
 
-Example:
-@BaseDate 2022-05-15
+Example scenario:
+  * compute YTD, QTD, MTD
+  * @BaseDate 2022-05-15
+  * @RecordDate 2021-12-15, 2022-02-28, 2022-04-13, 2022-05-14
 
-@RecordDate / Period | year | quarter | month |
-          2021-12-15 |    0 |       0 |     0 |
-          2022-02-28 |    1 |       0 |     0 |
-          2022-04-13 |    1 |       1 |     0 |
-          2022-05-14 |    1 |       1 |     1 |
+For a given BaseDate, the Period Dates would be:
+  * 2022-01-01 - year start
+  * 2022-04-01 - quarter start
+  * 2022-05-01 - month start
+  * 2022-05-15 - period end
 
+If we map these dates onto a time scale, the idea becomes clear:
+
+-------------- Time -------------- >>>
+
+Record Dates | 2021-12-15   2022-02-28   2022-04-13      2022-05-14    2022-05-31
+             |      |           |             |               |             |
+   year      |      0     |---- 1 ----------- 1 ------------- 1 ----|       0
+quarter      |      0     |     0      |----- 1 ------------- 1 ----|       0
+  month      |      0     |     0      |      0       |------ 1 ----|       0
+             |            |            |              |             |
+Period Dates |       2022-01-01   2022-04-01     2022-05-01    2022-05-15
+
+The output flags can be used as *multipliers* to detect correct records in aggregations.
 */
+
 CREATE FUNCTION dbo.ufnCheckDateIsInRange(@RecordDate DATETIME, @BaseDate DATETIME, @Period NVARCHAR(10))
 RETURNS INT
 AS
@@ -95,8 +111,9 @@ ELSE
     SET @Today = GETDATE()
 SET @TodayYearAgo = DATEADD(YEAR, -1, @Today)
 
+-- Final query
 SELECT
-	id_good,
+	good_name,
 	SUM(amount * dbo.ufnCheckDateIsInRange(s_date, @Today, 'year')) AS YTD,
 	SUM(amount * dbo.ufnCheckDateIsInRange(s_date, @Today, 'month')) AS MTD,
 	SUM(amount * dbo.ufnCheckDateIsInRange(s_date, @Today, 'quarter')) AS QTD,
@@ -104,7 +121,7 @@ SELECT
 	SUM(amount * dbo.ufnCheckDateIsInRange(s_date, @TodayYearAgo, 'month')) AS PMTD,
 	SUM(amount * dbo.ufnCheckDateIsInRange(s_date, @TodayYearAgo, 'quarter')) AS PQTD
 FROM
-	sales
+	sales LEFT JOIN ref_goods ON sales.id_good = ref_goods.id
 GROUP BY
-	id_good
-ORDER BY id_good;
+	good_name
+ORDER BY good_name;
