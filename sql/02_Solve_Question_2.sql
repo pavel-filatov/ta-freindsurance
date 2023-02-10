@@ -46,14 +46,14 @@ FROM
 )
 
 -- 3. Get only the first record for each group, as it represents the target condition
-SELECT 
+SELECT
+    WeekNum,
 	d.id AS doc_id,
 	rg.good_name AS good_name,
 	rgg.good_group_name AS good_group_name,
 	d.s_date AS s_date,
 	d.amount AS amount,
-	d.rate AS rate,
-	WeekNum
+	d.rate AS rate
 FROM
 	ordered_docs d
 LEFT JOIN ref_goods rg ON
