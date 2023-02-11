@@ -1,8 +1,6 @@
 /*
 SQL Task 1
 ==========
-Description
-
 Write script for selecting of sales sums for the periods:
 
    - YTD – from the beginning of current year until the current date, including it,
