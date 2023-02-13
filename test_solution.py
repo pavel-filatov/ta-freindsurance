@@ -116,4 +116,4 @@ def test_compute_number_of_permutations(
     ],
 )
 def test_solution_edge_cases(test_name: str, a: List[int], b: List[int], expected: int):
-    assert solution.solve(a, b) == expected
+    assert solution.solution(a, b) == expected

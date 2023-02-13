@@ -26,30 +26,10 @@ def solve_bruteforce(a: List[int], b: List[int]) -> int:
     return count
 
 
-def compute_number_of_combinations(
-    a_from: int, a_to: int, b_from: int, b_to: int
-) -> int:
-    """Computes a number of permutation pairs without repeats."""
-    if a_from > b_from:
-        # To simplify the solution, let's order the intervals
-        return compute_number_of_combinations(b_from, b_to, a_from, a_to)
-    if a_to >= b_to:
-        # Exclude equality, 'cause a single element cannot build a pair
-        # Any a > b makes no sense, as we expect every pair be ordered
-        # All that means, we can shrink the scope of the problem
-        return compute_number_of_combinations(a_from, b_to - 1, b_from, b_to)
-
-    a_power = max(a_to - a_from + 1, 0)
-    b_power = max(b_to - b_from + 1, 0)
-
-    if a_power == 0 or b_power == 0:
-        return 0
-    if b_from > a_to:
-        return a_power * b_power
-
-    intersection_power = a_to - b_from + 1
-
-    return a_power * b_power - sum(range(intersection_power + 1))
+def solution(a: List[int], b: List[int]) -> int:
+    """Finds a number of multiplicative paris and limits the output by a billion."""
+    count = solve_with_boundaries(a, b)
+    return min(count, 1_000_000_000)
 
 
 def solve_with_boundaries(a: List[int], b: List[int]) -> int:
@@ -165,10 +145,30 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
     return count
 
 
-def solve(a: List[int], b: List[int]) -> int:
-    """Finds a number of multiplicative paris and limits the output by a billion."""
-    count = solve_with_boundaries(a, b)
-    return min(count, 1_000_000_000)
+def compute_number_of_combinations(
+    a_from: int, a_to: int, b_from: int, b_to: int
+) -> int:
+    """Computes a number of permutation pairs without repeats."""
+    if a_from > b_from:
+        # To simplify the solution, let's order the intervals
+        return compute_number_of_combinations(b_from, b_to, a_from, a_to)
+    if a_to >= b_to:
+        # Exclude equality, 'cause a single element cannot build a pair
+        # Any a > b makes no sense, as we expect every pair be ordered
+        # All that means, we can shrink the scope of the problem
+        return compute_number_of_combinations(a_from, b_to - 1, b_from, b_to)
+
+    a_power = max(a_to - a_from + 1, 0)
+    b_power = max(b_to - b_from + 1, 0)
+
+    if a_power == 0 or b_power == 0:
+        return 0
+    if b_from > a_to:
+        return a_power * b_power
+
+    intersection_power = a_to - b_from + 1
+
+    return a_power * b_power - sum(range(intersection_power + 1))
 
 
 def find_index(
@@ -182,7 +182,7 @@ def find_index(
 ) -> Optional[int]:
     """Finds the minimal index of an element that at least equals the required one.
 
-    If there is no such an element, returns None.
+    If there is no such an element, returns default value.
     """
     assert (
         at_least is not None or at_most is not None
@@ -227,4 +227,5 @@ def find_index(
 
 
 def get_middle_index(start_at, finish_at):
+    """For"""
     return start_at + (finish_at - start_at) // 2
