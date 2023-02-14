@@ -91,10 +91,5 @@ Learn more at the website: https://python-poetry.org.
 
 ## Improvement ideas
 
-- Optimizations for the Python task:
-    - Set the left pointer by finding the biggest element and computing the least
-      value meeting the criteria
-    - Keep track of the last processed value of the left pointer
-    - Simplify `compute_number_of_combinations`
 - Create an architecture for the task 3
 - Experiment with Pivot SQL queries; is it efficient enough or require filtering beforehand?

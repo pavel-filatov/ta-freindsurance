@@ -89,7 +89,7 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
     ---------------------
       1. all pairs (0, 0)
       2. all pairs with x >= 2
-      3. all pairs with 1.001001 <= x < 2 and y >= 1 + 1e6 / b
+      3. all pairs with 1.001001 <= x < 2 (1001 < b < 999999) and y >= 1 + 1e6 / b
     """
     last_index = len(a) - 1
     count = 0
@@ -111,23 +111,25 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
         count += compute_number_of_combinations(
             at_least_two_min_index, last_index, at_least_two_min_index + 1, last_index
         )
-        logging.info(
-            f"At least two index: {at_least_two_min_index}\tValue:{a[at_least_two_min_index]}.{b[at_least_two_min_index]}"
-        )
-
         logging.info(f"There are numbers >= 2. Current count is: {count}")
 
-    # 3. The intermediate case: 1.001001 <= x < 2, y > 2
+    # 3. The intermediate case: 1 < x < 2, y > 2
+    # We can identify the starting index by the minimal x that will form a pair
+    # This x should be on or righter the boundary, for the maximal y
+    max_y = a[last_index] + b[last_index] / 1e6
+    min_x = max_y / (max_y - 1)
 
-    # Iterate over numbers from 1.001001 till 1.999999
-    # and try to find their siblings to form multiplier
-    # TODO: Use the last element in the array to define initial pointer's location
-    left_pointer = find_index(a, b, at_least=1.001001)
+    # Tracks indices of the first element of a pair (1 < x < 2) in forward direction
+    left_pointer = find_index(a, b, at_least=min_x)
+    # Tracks indices of the second element of a pair (y > 2) in backward direction
     right_pointer = last_index
+    # Keeps track of the last processed element on the left
+    last_processed_left = 0
 
-    while left_pointer < at_least_two_min_index:
+    # Stop when either of pointers reach the midpoint
+    while left_pointer < at_least_two_min_index <= right_pointer:
         # a[left_pointer] is already 1, so no need to check it
-        if b[left_pointer] >= 1001:
+        if b[left_pointer] > last_processed_left:
             min_y = 1 + 1e6 / b[left_pointer]
             min_y_index = find_index(
                 a, b, start_at=left_pointer, finish_at=right_pointer, at_least=min_y
@@ -139,7 +141,23 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
                 # Convergence step
                 right_pointer = min_y_index - 1
 
-        left_pointer += 1
+        # Update iterators
+        last_processed_left = b[left_pointer]
+        # A shortcut to identify the next index for x: find the predecessor for the current y
+        next_y_down = a[right_pointer] + b[right_pointer] / 1e6
+        # ... and a corresponding x value
+        next_min_x_up = next_y_down / (next_y_down - 1)
+        left_pointer = find_index(
+            a,
+            b,
+            start_at=left_pointer,
+            finish_at=at_least_two_min_index,
+            at_least=next_min_x_up,
+            # If there are no values meeting criteria,
+            # set it to the one associated with y >= 2,
+            # so that we can exit the loop
+            default=at_least_two_min_index,
+        )
 
     logging.info(f"Final count is {count}")
 
@@ -149,27 +167,24 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
 def compute_number_of_combinations(
     a_from: int, a_to: int, b_from: int, b_to: int
 ) -> int:
-    """Computes a number of permutation pairs without repeats."""
+    """Computes a number of permutation between elements of two intervals A and B without repeats."""
     if a_from > b_from:
         # To simplify the solution, let's order the intervals
         return compute_number_of_combinations(b_from, b_to, a_from, a_to)
-    if a_to >= b_to:
-        # Exclude equality, 'cause a single element cannot build a pair
-        # Any a > b makes no sense, as we expect every pair be ordered
-        # All that means, we can shrink the scope of the problem
-        return compute_number_of_combinations(a_from, b_to - 1, b_from, b_to)
 
-    a_power = max(a_to - a_from + 1, 0)
-    b_power = max(b_to - b_from + 1, 0)
+    # a_to >= b_to makes no sense, as we are interested only in pairs where id(x) < id(y) (strictly)
+    a_to = min(a_to, b_to - 1)
 
-    if a_power == 0 or b_power == 0:
-        return 0
-    if b_from > a_to:
-        return a_power * b_power
+    a_cardinality = max(a_to - a_from + 1, 0)
+    b_cardinality = max(b_to - b_from + 1, 0)
 
-    intersection_power = a_to - b_from + 1
+    # Cardinality < 0 highlights no intersection between intervals
+    intersection_cardinality = max(a_to - b_from + 1, 0)
 
-    return a_power * b_power - sum(range(intersection_power + 1))
+    # For no intersection, sum(range(1)) produces 0
+    pairs_counted_twice = sum(range(intersection_cardinality + 1))
+
+    return a_cardinality * b_cardinality - pairs_counted_twice
 
 
 def find_index(
@@ -222,11 +237,12 @@ def find_index(
             else:
                 finish_at = middle - 1
 
+        # Convergence step
         middle = get_middle_index(start_at, finish_at)
 
     return index_found
 
 
-def get_middle_index(start_at, finish_at):
-    """For"""
+def get_middle_index(start_at: int, finish_at: int) -> int:
+    """Finds the middle index in an array used for binary search."""
     return start_at + (finish_at - start_at) // 2
