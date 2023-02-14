@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "friendsurance"
+version = "0.1.0"
+description = ""
+authors = ["Pavel Filatov <filatov.py@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+cryptocode = "^0.1"
+pytest = "^7.2.1"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.1"
+hypothesis = "^6.68.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
