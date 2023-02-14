@@ -21,7 +21,7 @@ Include into results columns [good_name], YTD, MTD, QTD, PYTD, PMTD, PQTD.
 -- 1. Remove function if it already exists
 IF OBJECT_ID (N'dbo.ufnCheckDateIsInRange', N'FN') IS NOT NULL
     DROP FUNCTION ufnCheckDateIsInRange;
-GO;
+GO
 
 -- 2. Create a function
 /* This function checks whether a record's date falls into some time range
@@ -58,6 +58,7 @@ Period Dates |       2022-01-01   2022-04-01     2022-05-01    2022-05-15
 
 The output flags can be used as *multipliers* to detect correct records in aggregations.
 */
+GO
 
 CREATE FUNCTION dbo.ufnCheckDateIsInRange(@RecordDate DATETIME, @BaseDate DATETIME, @Period NVARCHAR(10))
 RETURNS INT
@@ -109,6 +110,9 @@ ELSE
     SET @Today = GETDATE()
 SET @TodayYearAgo = DATEADD(YEAR, -1, @Today)
 
+-- Output the base date
+SELECT @Today AS BaseDate
+
 -- Final query
 SELECT
 	good_name,
@@ -122,4 +126,4 @@ FROM
 	sales LEFT JOIN ref_goods ON sales.id_good = ref_goods.id
 GROUP BY
 	good_name
-ORDER BY good_name;
+ORDER BY good_name
