@@ -2,11 +2,11 @@ version: "3"
 services:
   sql-server:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      - "ACCEPT_EULA=Y"
-      - "MSSQL_SA_PASSWORD=AComplexPassword:ItShouldMeetRequirements!!!"
-      - "MSSQL_PID=Express"
+    env_file:
+      - .env
     ports:
       - "1433:1433"
     volumes:
       - ./sql:/sql
+      - ./scripts:/scripts
+      - ./output:/output

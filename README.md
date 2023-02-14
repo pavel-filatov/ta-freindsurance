@@ -5,11 +5,14 @@ Test assignment for Friendsurance.
 ## Prerequisites
 
 - Python 3.7+
+- Poetry
 - Docker
 
-## How to run
+## Task 1: Create SQL Queries
 
-### Set up SQL Server
+### Preparations
+
+#### Set up SQL Server
 
 To solve and test the SQL-related tasks, the Docker stack is used.
 To set it up and running, use a simple compose command:
@@ -19,6 +22,39 @@ docker compose up
 ```
 
 Check [`docker-compose.yml`](./docker-compose.yml) to learn more.
+
+All the SQL scripts are mounted from the `./sql` local directory to the `/sql` directory inside a container.
+
+:exclamation: Don't forget to teardown once the job is done:
+
+```shell
+docker compose down
+```
+
+#### Initialize the database
+
+To initialize the database and make it possible to run examples, execute the command:
+
+```shell
+docker exec -it friendsurance-sql-server-1 bash /scripts/run-sql.sh init-db
+```
+
+Once the script is done, you're free to go with examples.
+
+### Run the examples
+
+Running the queries is done the same way as DB initialization.
+The only difference there is the command choose `task-1` instead of the `init-db`
+to run the SQL script for the 1st task, `task-2` for the second etc.
+Example:
+
+```shell
+docker exec friendsurance-sql-server-1 bash /scripts/run-sql.sh [task-1,task-2,task-3]
+```
+
+**Note:** some tasks may have adjustable parameters, please check the corresponding scripts to find out more.
+
+The results of the tasks are written into the `./output` directory.
 
 ## Task 2: Python Challenge
 

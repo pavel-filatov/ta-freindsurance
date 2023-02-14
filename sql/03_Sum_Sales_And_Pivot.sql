@@ -26,13 +26,17 @@ The idea came from SO: https://stackoverflow.com/a/10404455
 */
 
 -- 1. Set variables for the query and validate them
-DECLARE @DateBegin DATE, @DateEnd DATE
+DECLARE @DateBegin DATE
+DECLARE @DateEnd DATE
 
+--- SET DESIRED VALUES HERE
 SET @DateBegin = '20160101'
 SET @DateEnd = '20160110'
 
 IF @DateEnd < @DateBegin
 	THROW 51000, '@DateEnd cannot be less than @DateBegin!', 1
+
+SELECT @DateBegin AS DateBegin, @DateEnd AS DateEnd
 
 -- 2. Declare helper variables
 --- To keep dates that become columns in the end
