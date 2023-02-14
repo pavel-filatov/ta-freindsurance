@@ -121,24 +121,25 @@ def solve_with_boundaries(a: List[int], b: List[int]) -> int:
 
     # Iterate over numbers from 1.001001 till 1.999999
     # and try to find their siblings to form multiplier
-    lower_index = find_index(a, b, at_least=1.001001)
-    upper_index = last_index
+    # TODO: Use the last element in the array to define initial pointer's location
+    left_pointer = find_index(a, b, at_least=1.001001)
+    right_pointer = last_index
 
-    while lower_index < at_least_two_min_index:
-        # a[lower_index] is already 1, so no need to check it
-        if b[lower_index] >= 1001:
-            min_y = 1 + 1e6 / b[lower_index]
+    while left_pointer < at_least_two_min_index:
+        # a[left_pointer] is already 1, so no need to check it
+        if b[left_pointer] >= 1001:
+            min_y = 1 + 1e6 / b[left_pointer]
             min_y_index = find_index(
-                a, b, start_at=lower_index, finish_at=upper_index, at_least=min_y
+                a, b, start_at=left_pointer, finish_at=right_pointer, at_least=min_y
             )
             if min_y_index is not None:
                 count += compute_number_of_combinations(
-                    lower_index, at_least_two_min_index - 1, min_y_index, upper_index
+                    left_pointer, at_least_two_min_index - 1, min_y_index, right_pointer
                 )
                 # Convergence step
-                upper_index = min_y_index - 1
+                right_pointer = min_y_index - 1
 
-        lower_index += 1
+        left_pointer += 1
 
     logging.info(f"Final count is {count}")
 
