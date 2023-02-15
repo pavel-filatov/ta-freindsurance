@@ -2,15 +2,15 @@
 
 ## Problem Definition
 
-Given an array of non-negative numbers, find the number of multiplicative pairs (x, y) in it.
+Given an array of non-negative numbers, find the number of multiplicative pairs $(x, y)$ in it.
 
-We call a pair "multiplicative" if the product of its elements is not less than their sum.
+A pair is called "multiplicative" if the product of its elements is not less than their sum.
 
 Requirements:
 
 - $id(x) < id(y)$ - element y **always** goes after x in the array
-- $x <= y$ - all elements in the array are sorted in non-decreasing order
-- $x * y >= x + y$ - this condition defines if a given pair is multiplicative
+- $x \leq y$ - all elements in the array are sorted in non-decreasing order
+- $x * y \geq x + y$ - this condition defines if a given pair is multiplicative
 
 ## Explorations, Explanations, and Solution
 
@@ -18,7 +18,7 @@ Let's start with plotting such pairs on a plane.
 
 ![](./01_graphical_representation.png)
 
-All the points (x, y) inside the blue areas meet the condition and
+All points $(x, y)$ inside the blue areas meet the condition and
 represent multiplicative pairs.
 
 > Note: The boundary between the areas is defined by an equation $y = x / (x - 1)$.
@@ -33,7 +33,7 @@ We can actually define the solution space by applying all those requirements.
 
 If we look closer, we can notice several special cases.
 
-#### x = 0, y = 0
+#### $x = 0, y = 0$
 
 First, for the lower blue area.
 All its solutions require at least one element to be negative.
@@ -41,32 +41,32 @@ All but one, (0, 0).
 
 This will be our first special case.
 
-#### x >= 2
+#### $x \geq 2$
 
-Now, to the upper area. We know that $y >= x$, always.
+Now, to the upper area. We know that $y \geq x$, always.
 
 With this knowledge, we can play around with the inequality.
 
-- if $y >= x$, then $y + y >= x + y$
-- if $xy >= y + y$, then $xy >= x + y$ as well
-- if $xy >= 2y$, then $x >= 2$
+- if $y \geq x$, then $y + y \geq x + y$
+- if $xy \geq y + y$, then $xy \geq x + y$ as well
+- if $xy \geq 2y$, then $x \geq 2$
 
-That means, for **any** $x >= 2$, **any** $y >= x$ builds a proper multiplicative pair.
+That means, for **any** $x \geq 2$, **any** $y \geq x$ builds a proper multiplicative pair.
 
 Check the graphical proof:
 
 ![](./03_x_gte_2.png)
 
-#### 0 < x < 1
+#### $0 < x < 1$
 
-As soon as x = 1 is the boundary's asymptote,
+As soon as $x = 1$ is the boundary's asymptote,
 the whole upper blue area is laying on the left of it.
 
 That means, in this interval we cannot find any proper pairs. Never.
 
 ![04_less_than_1](04_less_than_1.png)
 
-#### 1 < x < 2
+#### $1 < x < 2$
 
 This is the most interesting case. For all xs from this interval, we need to find
 corresponding ys.
@@ -83,14 +83,14 @@ there are no pair siblings for $1 < x < 2$.
 Also, we are able to find the minimal $y$ meeting the criteria: $y_{min} = x / (x - 1)$.
 (Yes, this is a boundary condition.)
 
-Any $y >= y_{min}$ will create a proper multiplicative pair with that $x$.
+Any $y \geq y_{min}$ will create a proper multiplicative pair with that $x$.
 
 #### Summarize the Findings
 
 To sum up, this is what we discovered to be a (non-)solution:
 
 - all $(0, 0)$ elements build pairs
-- for all $x >= 2$, any $y$ builds a pair
+- for all $x \geq 2$, any $y$ builds a pair
 - for all $1 < x < 2$, we can find $y_{min}$ after which all pairs are valid
 - there are no possible pairs for $0 < x < 1$
 
