@@ -90,7 +90,7 @@ Any $y \geq y_{min}$ will create a proper multiplicative pair with that $x$.
 To sum up, this is what we discovered to be a (non-)solution:
 
 - all $(0, 0)$ elements build pairs
-- for all $x /geq 2$, any $y$ builds a pair
+- for all $x \geq 2$, any $y$ builds a pair
 - for all $1 < x < 2$, we can find $y_{min}$ after which all pairs are valid
 - there are no possible pairs for $0 < x < 1$
 
